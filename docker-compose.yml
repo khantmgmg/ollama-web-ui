@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   ollama:
-    image: ollama/ollama:${OLLAMA_DOCKER_TAG-latest}
+    image: ollama/ollama
     container_name: ollama
     volumes:
       - ./ollama-webui/ollama:/root/.ollama  # Adjust this path if necessary
@@ -12,26 +12,26 @@ services:
       - ollama_network
 
   open-webui:
-    build:
-      context: .
-      args:
-        OLLAMA_BASE_URL: '/ollama'
-      dockerfile: Dockerfile  # Make sure this Dockerfile exists
-    image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
+    #build:
+    #  context: .
+    #  args:
+    #    OLLAMA_BASE_URL: '/ollama'
+    #  dockerfile: Dockerfile  # Make sure this Dockerfile exists
+    image: ghcr.io/open-webui/open-webui
     container_name: open-webui
     volumes:
       - ./ollama-webui/open-webui:/app/backend/data  # Adjust this path if necessary
     depends_on:
       - ollama
     ports:
-      - ${OPEN_WEBUI_PORT-3000}:8080  # Ensure this env var or default works
+      - 3000:8080  # Ensure this env var or default works
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:11434'
       - 'WEBUI_SECRET_KEY='  # Set the secret key if needed
     networks:
       - ollama_network
-    extra_hosts:
-      - host.docker.internal:host-gateway  # Remove if not needed
+    # extra_hosts:
+    #  - host.docker.internal:host-gateway  # Remove if not needed
     restart: unless-stopped
 
 networks:
